@@ -1,4 +1,4 @@
-
+var map;
 
 var generateNewReport = function(latlon, cityCount){
   console.log("generateNewReport invoked")
@@ -40,6 +40,7 @@ var publishWeatherReport = function(citiesArray){
     // add cities to report
     for (var i = 0; i<citiesArray.length; i++){
       addWeatherReport( reportList, citiesArray[i] );
+      addMapMarker(citiesArray[i].coord)
     }
 
   } else {
@@ -56,6 +57,48 @@ var addWeatherReport = function(parent, cityObject){
 }
 
 
+var addMapMarker = function(latlon, label){
+  var latLng = {lat: latlon.lat, lng: latlon.lon}
+  var marker = new google.maps.Marker({
+    position: latLng,
+    map: map,
+    label: label
+  })
+  console.log(latLng)
+}
+
+
+
+
+var onPageLoad = function(){
+  // make map
+   map = new google.maps.Map(document.getElementById('gmap'), {
+     center: {lat: 0, lng: 0},
+     zoom: 9
+   });
+
+
+
+  //get users current position
+  if ("geolocation" in navigator){
+    // update report on page for current location.
+    navigator.geolocation.getCurrentPosition(function(position) {
+      var currentLatLon = {
+        lat: position.coords.latitude, 
+        lon: position.coords.longitude
+      }; 
+      map.setCenter({lat: currentLatLon.lat, lng: currentLatLon.lon})
+      addMapMarker(currentLatLon, "1")
+
+      generateNewReport(currentLatLon, 10);
+    });
+  } else {
+  }
+
+
+  }
+
+window.onload = onPageLoad;
 
 // eaxmple request of latlng
 //http://api.openweathermap.org/data/2.5/find?lat=55.5&lon=37.5&cnt=40&APPID=7225d2a55f7cd772384dbba91030c84a
@@ -67,50 +110,3 @@ var addWeatherReport = function(parent, cityObject){
 // "&cnt=
 // count +
 // "&APPID=7225d2a55f7cd772384dbba91030c84a"
-
-
-
-var onPageLoad = function(){
-  //get users current position
-  if ("geolocation" in navigator){
-    // update report on page for current location.
-    navigator.geolocation.getCurrentPosition(function(position) {
-      var currentLatLon = {
-        lat: position.coords.latitude, 
-        lon: position.coords.longitude
-      };
-      
-      generateNewReport(currentLatLon, 50) 
-    });
-  } else {
-  }
-
-
-  // this works, temporary disable to enable mapping
-  
-
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-window.onload = onPageLoad;
