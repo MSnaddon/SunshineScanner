@@ -1,14 +1,37 @@
 var map;
 
-var generateNewReport = function(latlon, cityCount){
+var getScanArea = function(latlon, range){
+  // generate array of left,top,right,bottom for scanning box
+  scanBox = [
+  latlon.lon-range,
+  latlon.lat+range,
+  latlon.lon+range,
+  latlon.lat-range
+  ]
+  
+  return scanBox
+}
+
+// called upon generating a new clear-sky map
+var generateNewReport = function(latlon, range){
   console.log("generateNewReport invoked")
   // build URL
   var key = "7225d2a55f7cd772384dbba91030c84a";
-  var url = "http://api.openweathermap.org/data/2.5/find?lat=" + latlon.lat + "&lon=" + latlon.lon + "&cnt=" + cityCount + "&APPID=" + key;
+  var boxCoords = getScanArea(latlon, range).join(",");
+  console.log(boxCoords)
+  var url = "http://api.openweathermap.org/data/2.5/box/city?bbox=" + boxCoords + ",20&cluster=yes&appid=" + key
+  console.log("request url", url)
+
+  //http://api.openweathermap.org/data/2.5/box/city?bbox=12,32,15,37,10&cluster=yes&appid=b1b15e88fa797225412429c1c50c122a1
+
   // make request to API
   makeSunnyRequest(url, getNearestSunshine)
+
+  // OLD KEY
+  // var url = "http://api.openweathermap.org/data/2.5/find?lat=" + latlon.lat + "&lon=" + latlon.lon + "&cnt=" + cityCount + "&APPID=" + key;
 }
 
+// api request info
 var makeSunnyRequest = function(url, callback){
   console.log("makeRequest invoked")
   var request = new XMLHttpRequest();
@@ -17,11 +40,13 @@ var makeSunnyRequest = function(url, callback){
   request.send();
 }
 
+// parse the information from request into data arrays
 var getNearestSunshine = function(){
   console.log("getNearestSunshine invoked", "status: " + this.status)
   if (this.status !== 200) return;
   var jsonString = this.responseText;
   var cities = JSON.parse(jsonString);
+  console.log(cities)
 
   // filter out for sunny cities
   var sunnyCities = cities.list.filter(function(city){
@@ -30,7 +55,7 @@ var getNearestSunshine = function(){
   publishWeatherReport(sunnyCities);
 }
 
-
+// present information on app page
 var publishWeatherReport = function(citiesArray){
   // get weather report element
   var reportList = document.querySelector("#weather-report");
@@ -42,7 +67,6 @@ var publishWeatherReport = function(citiesArray){
       addWeatherReport( reportList, citiesArray[i] );
       addMapMarker(citiesArray[i].coord)
     }
-
   } else {
     console.log("no sun");
   }
@@ -73,11 +97,9 @@ var addMapMarker = function(latlon, label){
 var onPageLoad = function(){
   // make map
    map = new google.maps.Map(document.getElementById('gmap'), {
-     center: {lat: 0, lng: 0},
-     zoom: 9
+     // center: {lat: 0, lng: 0},
+     zoom: 7
    });
-
-
 
   //get users current position
   if ("geolocation" in navigator){
@@ -87,26 +109,33 @@ var onPageLoad = function(){
         lat: position.coords.latitude, 
         lon: position.coords.longitude
       }; 
+      
+      // pittsburgh america test
+      // currentLatLon={lat:40, lon:-80}
+
       map.setCenter({lat: currentLatLon.lat, lng: currentLatLon.lon})
+
       addMapMarker(currentLatLon, "1")
-
-      generateNewReport(currentLatLon, 10);
+      generateNewReport(currentLatLon, 1.5);
     });
-  } else {
   }
-
 
   }
 
 window.onload = onPageLoad;
 
-// eaxmple request of latlng
-//http://api.openweathermap.org/data/2.5/find?lat=55.5&lon=37.5&cnt=40&APPID=7225d2a55f7cd772384dbba91030c84a
-// in string concatination->
-// "http://api.openweathermap.org/data/2.5/find?lat=" + 
-// lat +
-// "&lon=" +
-// lng +
-// "&cnt=
-// count +
-// "&APPID=7225d2a55f7cd772384dbba91030c84a"
+
+
+
+
+
+// DEPRECATED CODE
+
+// var generateNewReport = function(latlon, cityCount){
+//   console.log("generateNewReport invoked")
+//   // build URL
+//   var key = "7225d2a55f7cd772384dbba91030c84a";
+//   var url = "http://api.openweathermap.org/data/2.5/find?lat=" + latlon.lat + "&lon=" + latlon.lon + "&cnt=" + cityCount + "&APPID=" + key;
+//   // make request to API
+//   makeSunnyRequest(url, getNearestSunshine)
+// }
