@@ -44,11 +44,10 @@ var makeSunnyRequest = function(url, callback){
 
 // parse the information from request into data arrays
 var getNearestSunshine = function(){
-  console.log("getNearestSunshine invoked", "status: " + this.status)
+  // console.log("getNearestSunshine invoked", "status: " + this.status)
   if (this.status !== 200) return;
   var jsonString = this.responseText;
   var cities = JSON.parse(jsonString);
-  console.log(cities)
 
   // filter out for sunny cities
   var sunnyCities = cities.list.filter(function(city){
@@ -62,9 +61,9 @@ var getNearestSunshine = function(){
 var distanceCalc = function(lat, lon){
   var latDif = Math.abs(currentLatLon.lat - lat);
   var lonDif = Math.abs(currentLatLon.lon - lon);
-  var distance = Math.sqrt(Math.pow(latDif,2) + Math.pow(lonDif,2))
-  console.log("distance calculated:", distance)
-  return distance
+  var distance = Math.sqrt(Math.pow(latDif,2) + Math.pow(lonDif,2));
+  console.log("distance calculated:", distance);
+  return distance;
 }
 
 var sortByDistance = function(citiesArray){
@@ -81,9 +80,7 @@ var sortByDistance = function(citiesArray){
 // present information on app page
 var publishWeatherReport = function(citiesArray){
 
-  citiesArray = sortByDistance(citiesArray)
-
-
+  citiesArray = sortByDistance(citiesArray);
 
   // get weather report element
   var reportList = document.querySelector("#weather-report");
@@ -92,7 +89,7 @@ var publishWeatherReport = function(citiesArray){
     // add cities to report
     for (var i = 0; i<citiesArray.length; i++){
       addWeatherReport( reportList, citiesArray[i] );
-      addMapMarker(citiesArray[i].coord)
+      addMapMarker(citiesArray[i].coord);
     }
   } else {
     console.log("no sun");
@@ -102,9 +99,32 @@ var publishWeatherReport = function(citiesArray){
 // needs some work to make the appearance better, maybe even a flickr api and animations?
 var addWeatherReport = function(parent, cityObject){
   // console.log(cityObject.weather[0])
-  console.log("weather report added")
-  var weatherBlock = document.createElement('p')
-  weatherBlock.innerText = cityObject.name + " weather is " +cityObject.weather[0].description
+  console.log("weather report added", cityObject);
+  var weatherBlock = document.createElement('div');
+  weatherBlock.setAttribute("class", "weather-block");
+
+
+  var icon = document.createElement('img');
+  icon.width = 70;
+  icon.height = 70;
+  icon.src = "icons/01d.png";
+  weatherBlock.appendChild(icon);
+
+  var description = document.createElement("div");
+  description.setAttribute("class","weather-block-description");
+  
+  var descriptionHead = document.createElement("p");
+  descriptionHead.innerText = cityObject.name + " has clear skies."
+  description.appendChild(descriptionHead)
+
+  var descriptionBody = document.createElement("p");
+  descriptionBody.innerText = "The temperature is : " + cityObject.main.temp + "°C with a humidity of " + cityObject.main.humidity +"%";
+  description.appendChild(descriptionBody)
+
+  weatherBlock.appendChild(description);
+
+
+
   parent.appendChild(weatherBlock)
 }
 
@@ -144,6 +164,9 @@ var onPageLoad = function(){
       generateNewReport(currentLatLon, 1.5);
     });
   }
+
+
+
 }
 
 window.onload = onPageLoad;

@@ -4,3 +4,15 @@
   margin-right: auto;
   margin-left: auto;
 }
+
+#weather-report {
+  
+}
+
+.weather-block{
+  display:flex;
+}
+
+.weather-block:nth-child(even){
+  background: #;
+}
