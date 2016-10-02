@@ -112,7 +112,7 @@ var addWeatherReport = function(parent, cityObject){
 
   var description = document.createElement("div");
   description.setAttribute("class","weather-block-description");
-  
+
   var descriptionHead = document.createElement("p");
   descriptionHead.innerText = cityObject.name + " has clear skies."
   description.appendChild(descriptionHead)
@@ -144,7 +144,7 @@ var addMapMarker = function(latlon, label){
 var onPageLoad = function(){
   // make map
   map = new google.maps.Map(document.getElementById('gmap'), {
-     zoom: 7
+     zoom: 8
    });
 
   //get users current position

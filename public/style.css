@@ -1,18 +1,33 @@
+html{
+  background:dodgerblue;
+}
+
 #gmap {
-  width: 500px;
+  width: 80%;
   height: 500px;
   margin-right: auto;
   margin-left: auto;
 }
 
 #weather-report {
-  
+  margin-top: 20px;
+  padding: 20px;
+  border:2px solid cyan;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .weather-block{
+  border: 2px solid orange;
+  min-width: 450px;
   display:flex;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .weather-block:nth-child(even){
-  background: #;
+  background: #ffff33;
+}
+.weather-block:nth-child(odd){
+  background: #d0d011;
 }
