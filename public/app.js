@@ -19,7 +19,9 @@ var generateNewReport = function(latlon, range){
   console.log("generateNewReport invoked")
   // build URL
   var key = "7225d2a55f7cd772384dbba91030c84a";
+
   var boxCoords = getScanArea(latlon, range).join(",");
+
   console.log(boxCoords)
   var url = "http://api.openweathermap.org/data/2.5/box/city?bbox=" + boxCoords + ",20&cluster=yes&appid=" + key
   console.log("request url", url)
@@ -92,11 +94,10 @@ var publishWeatherReport = function(citiesArray){
       addMapMarker(citiesArray[i].coord);
     }
   } else {
-    console.log("no sun");
+    addWeatherReport(reportList, [{main: {temp: "N/A", humidity: 0}, name: "Nowhere"}])
   }
 }
 
-// needs some work to make the appearance better, maybe even a flickr api and animations?
 var addWeatherReport = function(parent, cityObject){
   // console.log(cityObject.weather[0])
   console.log("weather report added", cityObject);
@@ -123,10 +124,11 @@ var addWeatherReport = function(parent, cityObject){
 
   weatherBlock.appendChild(description);
 
-
-
   parent.appendChild(weatherBlock)
 }
+
+
+
 
 
 var addMapMarker = function(latlon, label){
@@ -156,12 +158,14 @@ var onPageLoad = function(){
         lon: position.coords.longitude
       }; 
 
+      // pittsburgh america test
+      // currentLatLon={lat:40, lon:-80}
 
       // update page with new location
       map.setCenter({lat: currentLatLon.lat, lng: currentLatLon.lon})
 
       addMapMarker(currentLatLon, "1")
-      generateNewReport(currentLatLon, 1.5);
+      generateNewReport(currentLatLon, 3);
     });
   }
 
@@ -179,8 +183,7 @@ window.onload = onPageLoad;
 // DEPRECATED CODE
 
 
-// pittsburgh america test
-// currentLatLon={lat:40, lon:-80}
+
 
 
 // var generateNewReport = function(latlon, cityCount){
